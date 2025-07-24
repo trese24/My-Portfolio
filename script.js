@@ -1,111 +1,175 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const codeDisplay = document.getElementById('code-display');
-    const replayBtn = document.getElementById('replay-btn');
-    let currentIndex = 0;
-    let typingSpeed = 10; // Lower is faster
-    let typingTimeout;
+             //Typing  script
+             document.addEventListener('DOMContentLoaded', function () {
+                const texts = [
+                    "Software Developer",
+                    "Web Developer",
+                    "Game Developer",
+                    "Cyber Security"
+                ];
 
-    function typeCharacter() {
-        if (currentIndex < cssCode.length) {
-            // Add the next character
-            codeDisplay.textContent = cssCode.substring(0, currentIndex + 1);
-            currentIndex++;
-            
-            // Add cursor
-            const cursor = document.createElement('span');
-            cursor.className = 'cursor';
-            codeDisplay.appendChild(cursor);
-            
-            // Scroll to bottom
-            const codeContainer = document.getElementById('code-container');
-            codeContainer.scrollTop = codeContainer.scrollHeight;
-            
-            // Schedule next character
-            typingTimeout = setTimeout(typeCharacter, typingSpeed + (Math.random() * 20));
-        } else {
-            // Remove cursor when done
-            const cursors = document.getElementsByClassName('cursor');
-            if (cursors.length > 0) {
-                cursors[0].remove();
-            }
-        }
-    }
+                const animatedText = document.querySelector('.animated-text');
+                const cursor = document.querySelector('.cursor');
 
-    function startTyping() {
-        // Clear any ongoing typing
-        clearTimeout(typingTimeout);
-        
-        // Reset
-        currentIndex = 0;
-        codeDisplay.textContent = '';
-        
-        // Start typing
-        typeCharacter();
-    }
+                let textIndex = 0;
+                let charIndex = 0;
+                let isDeleting = false;
+                let typingSpeed = 150;
+                let isWaiting = false;
 
-    // Event listener for replay button
-    replayBtn.addEventListener('click', startTyping);
-
-    // Start typing when page loads
-    startTyping();
-});
-
-window.addEventListener("scroll", function(){
-    scrollBtn.classList.toggle("active", window.scrollY > 500);
-});
-
-//javascript for scroll back to top on click scroll-to-top button
-
-// document.querySelector(".scrollToTop-btn").addEventListener("click", () => {
-//   document.body.scrollTop = 0;
-//   document.documentElement.scrollTop = 0;
-// });
-
-        const menuBtn = document.querySelector(".menu-btn");
-        const navigation = document.querySelector(".navigation");
-        const navigationItems = document.querySelector(".navigation a");
-
-        menuBtn.addEventListener("click", () => {
-            menuBtn.classList.toggle("active");
-            navigation.classList.toggle("active");
-        })
-
-        // Navigation Effects
-        window.addEventListener("scroll", function(){
-            const header = document.querySelector("header");
-            header.classList.toggle("sticky", window.scrollY > 0);
-        })
-
-        navigationItems.forEach((navigationItem) => {
-            navigationItem.addEventListener("click", () => {
-                menuBtn.classList.remove("active");
-                navigation.classList.remove("active")
-            })
-        })
-
-        // Toggle mobile menu
-            const menuBtn = document.querySelector(".menu-btn");
-            const navigation = document.querySelector(".navigation");
-
-            menuBtn.addEventListener("click", () => {
-                menuBtn.classList.toggle("open");
-                navigation.classList.toggle("active");
-            });
-
-            // Sticky header on scroll
-            window.addEventListener("scroll", () => {
-                const header = document.querySelector("header");
-                header.classList.toggle("sticky", window.scrollY > 0);
-            });
-
-            // Close mobile menu when clicking a link
-            document.querySelectorAll(".navigation a").forEach((link) => {
-                link.addEventListener("click", () => {
-                    if (navigation.classList.contains("active")) {
-                        menuBtn.classList.remove("open");
-                        navigation.classList.remove("active");
+                function type() {
+                    // If we're in waiting state between words, skip processing
+                    if (isWaiting) {
+                        setTimeout(type, typingSpeed);
+                        return;
                     }
-                });
-            });
 
-            
+                    const currentText = texts[textIndex];
+
+                    if (!isDeleting && charIndex <= currentText.length) {
+                        // Typing forward
+                        animatedText.textContent = currentText.substring(0, charIndex);
+                        charIndex++;
+                        typingSpeed = 150;
+
+                        if (charIndex > currentText.length) {
+                            // Finished typing current word
+                            isDeleting = true;
+                            typingSpeed = 1000; // Pause at full word
+                            isWaiting = true;
+                        }
+                    } else if (isDeleting && charIndex >= 0) {
+                        // Deleting backward
+                        animatedText.textContent = currentText.substring(0, charIndex);
+                        charIndex--;
+                        typingSpeed = 50;
+
+                        if (charIndex < 0) {
+                            // Finished deleting current word
+                            isDeleting = false;
+                            textIndex = (textIndex + 1) % texts.length;
+                            typingSpeed = 500; // Pause before next word
+                            isWaiting = true;
+                        }
+                    }
+
+                    // Reset waiting state after delay
+                    if (isWaiting) {
+                        setTimeout(() => {
+                            isWaiting = false;
+                            type();
+                        }, typingSpeed);
+                    } else {
+                        setTimeout(type, typingSpeed);
+                    }
+                }
+
+                // Start animation
+                type();
+            });
+         //<!--Education cards script -->
+            // Create animated particles
+                function createParticles() {
+                    const particlesContainer = document.getElementById('particles');
+                    const particleCount = 30;
+
+                    for (let i = 0; i < particleCount; i++) {
+                        const particle = document.createElement('div');
+                        particle.classList.add('particle');
+
+                        // Random properties
+                        const size = Math.random() * 5 + 2;
+                        const posX = Math.random() * 100;
+                        const delay = Math.random() * 15;
+                        const duration = Math.random() * 10 + 10;
+
+                        particle.style.width = `${size}px`;
+                        particle.style.height = `${size}px`;
+                        particle.style.left = `${posX}%`;
+                        particle.style.animationDelay = `${delay}s`;
+                        particle.style.animationDuration = `${duration}s`;
+
+                        particlesContainer.appendChild(particle);
+                    }
+                }
+
+                // Animate timeline items on scroll
+                const timelineItems = document.querySelectorAll('.timeline-item');
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.2 });
+
+                timelineItems.forEach((item, index) => {
+                    observer.observe(item);
+                    item.style.transitionDelay = `${index * 0.2}s`;
+                });
+
+                // Initialize particles when page loads
+                window.addEventListener('load', createParticles);
+
+                // Block right-click (prevents "Inspect Element")
+document.addEventListener("contextmenu", (e) => e.preventDefault());
+
+// Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+document.addEventListener("keydown", (e) => {
+    if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key === "I") ||
+        (e.ctrlKey && e.shiftKey && e.key === "J") ||
+        (e.ctrlKey && e.key === "U")
+    ) {
+        e.preventDefault();
+        alert("Inspection is disabled.");
+    }
+});
+
+                    //diasble the page 
+
+                    //setInterval(function() {
+                        //if (document.documentMode || /webkit/i.test(navigator.userAgent) || /firefox/i.test(navigator.userAgent)) {
+                            //if (window.outerHeight - window.innerHeight > 100 || window.outerWidth - window.innerWidth > 100) {
+                               // document.body.innerHTML = ''; window.close();
+                            //}
+                        //}
+                        //, 1000);
+                        // Override console methods
+// Check if DevTools is open (works in Chrome, Edge, Firefox)
+setInterval(() => {
+    const widthThreshold = window.outerWidth - window.innerWidth > 150;
+    const heightThreshold = window.outerHeight - window.innerHeight > 150;
+    
+    if (widthThreshold || heightThreshold) {
+        // DevTools detected - take action
+        document.body.innerHTML = `
+            <h1>Developer Tools Detected</h1>
+            <p>This page does not allow inspection.</p>
+            <p>Redirecting in <span id="countdown">5</span> seconds...</p>
+        `;
+        
+        // Auto-reload after 5 seconds
+        let count = 5;
+        setInterval(() => {
+            count--;
+            document.getElementById("countdown").textContent = count;
+            if (count <= 0) window.location.reload();
+        }, 1000);
+    }
+}, 1000);     
+
+
+
+// Detect DevTools opening
+setInterval(() => {
+  if (window.outerWidth - window.innerWidth > 200 || 
+      window.outerHeight - window.innerHeight > 200) {
+    document.body.innerHTML = 'DevTools detected!';
+    window.location.reload();
+  }
+}, 1000);
+
+                        
+

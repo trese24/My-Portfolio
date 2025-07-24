@@ -160,7 +160,57 @@ setInterval(() => {
     }
 }, 1000);     
 
+// Break debugger attempts in Sources tab
+(function() {
+  function debuggerDetector() {
+    const startTime = Date.now();
+    (function() {
+      debugger;
+      const endTime = Date.now();
+      if (endTime - startTime > 100) {
+        // Debugger detected
+        document.body.innerHTML = '<h1>Debugging Not Allowed</h1>';
+        window.stop();
+      }
+    })();
+  }
+  
+  setInterval(debuggerDetector, 1000);
+})();
 
+module.exports = {
+  productionSourceMap: false,
+  devtool: 'none'
+  // ...
+}
+// Instead of static script tags, load JavaScript dynamically
+(function() {
+  function loadProtectedScript(encodedScript) {
+    const script = document.createElement('script');
+    script.textContent = atob(encodedScript);
+    document.head.appendChild(script).remove();
+  }
+  
+  // Your main code would be base64 encoded
+  const protectedCode = '/* Your base64 encoded script here */';
+  loadProtectedScript(protectedCode);
+  
+  // Remove original script tags
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('script:not([data-protected])').forEach(script => {
+      script.remove();
+    });
+  });
+})();
+
+(async function() {
+  const response = await fetch('protected-functions.wasm');
+  const bytes = await response.arrayBuffer();
+  const module = await WebAssembly.instantiate(bytes);
+  
+  // Use your protected functions
+  window.sensitiveOperation = module.exports.sensitiveOperation;
+})();
 
 // Detect DevTools opening
 setInterval(() => {

@@ -221,5 +221,54 @@ setInterval(() => {
   }
 }, 1000);
 
+ // Function to open the modal - make sure this is properly defined
+    function openModal(imageSrc, title) {
+        console.log("Opening modal with:", imageSrc); // Debugging line
+        const modal = document.getElementById('certificateModal');
+        const modalImg = document.getElementById('modalImage');
+        const captionText = document.getElementById('caption');
+        
+        if (!modal || !modalImg || !captionText) {
+            console.error("Modal elements not found!");
+            return;
+        }
+        
+        modal.style.display = "block";
+        modalImg.src = imageSrc;
+        modalImg.alt = title; // For accessibility
+        captionText.innerHTML = title;
+        
+        document.body.classList.add('modal-open');
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        const modal = document.getElementById('certificateModal');
+        if (modal) {
+            modal.style.display = "none";
+            document.body.classList.remove('modal-open');
+        }
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        // Close modal when clicking outside
+        const modal = document.getElementById('certificateModal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+        
+        // Close with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    });
+
                         
 
